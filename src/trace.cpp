@@ -41,7 +41,7 @@ void __cyg_profile_func_enter(void *callee, void *caller) {
         if (!maybe_resolved) { return; }
         last_frame_was_resolved = true;
         current_stack_depth++;
-        fprintf(fp_trace, "%s\n", utils::format(*maybe_resolved, current_stack_depth).c_str());
+        fprintf(stderr, "%s\n", utils::format(*maybe_resolved, current_stack_depth).c_str());
     }
 }
 
