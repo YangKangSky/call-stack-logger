@@ -35,19 +35,17 @@ void trace_end() {
 
 extern "C" NO_INSTRUMENT
 void __cyg_profile_func_enter(void *callee, void *caller) {
-    if(fp_trace != nullptr) {
-        last_frame_was_resolved = false;
-        auto maybe_resolved = instrumentation::resolve(callee, caller);
-        if (!maybe_resolved) { return; }
-        last_frame_was_resolved = true;
-        current_stack_depth++;
-        fprintf(stderr, "%s\n", utils::format(*maybe_resolved, current_stack_depth).c_str());
-    }
+	last_frame_was_resolved = false;
+	auto maybe_resolved = instrumentation::resolve(callee, caller);
+	if (!maybe_resolved) { return; }
+	last_frame_was_resolved = true;
+	current_stack_depth++;
+	fprintf(stderr, "%s\n", utils::format(*maybe_resolved, current_stack_depth).c_str());  
 }
 
 extern "C" NO_INSTRUMENT
 void __cyg_profile_func_exit (void *callee, void *caller) {
-    if(fp_trace != nullptr && last_frame_was_resolved) {
+    if(last_frame_was_resolved) {
         current_stack_depth--;
         //fprintf(fp_trace, "x %p %p %lu\n", callee, caller, time(nullptr));
     }

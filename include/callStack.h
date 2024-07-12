@@ -8,7 +8,13 @@
  */
 
 #pragma once
-
+// Workaround for deliberately incompatible bfd.h header files on some systems.
+#ifndef PACKAGE
+    #define PACKAGE
+#endif
+#ifndef PACKAGE_VERSION
+    #define PACKAGE_VERSION
+#endif
 #include "types.h"
 #include <bfd.h>
 #include <dlfcn.h>
