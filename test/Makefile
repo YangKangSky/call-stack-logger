@@ -26,7 +26,7 @@ IDIR = ../include
 ODIR = ../build
 LIB_DIR = ../lib
 INCS = -I$(IDIR) -L$(LIB_DIR)
-LIBS = -ldl -lbfd 
+LIBS = -ldl -lbfd  -L$(ODIR) -lcallstack
 
 SOURCES := main.cpp
 
@@ -61,7 +61,7 @@ build: build-dynamic build-static
 build-dynamic: $(DYNAMIC_EXECUTABLE)
 build-static: $(STATIC_EXECUTABLE)
 
-$(DYNAMIC_EXECUTABLE): $(DYNAMIC_LIBRARY) $(OBJS)
+$(DYNAMIC_EXECUTABLE):  $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 $(STATIC_EXECUTABLE): $(STATIC_LIBRARY) $(OBJS)
