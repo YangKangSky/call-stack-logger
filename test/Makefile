@@ -19,7 +19,8 @@ CPP_STD_INCLUDES := "${CPP_STD_INCLUDES},include/callStack.h,include/unwinder.h,
 $(info $$CPP_STD_INCLUDES is [${CPP_STD_INCLUDES}])
 
 CXX ?= g++
-CXXFLAGS += -g -Wall -rdynamic -std=c++17 -finstrument-functions -finstrument-functions-exclude-file-list=$(CPP_STD_INCLUDES)
+CXXFLAGS += -g -O0 -Wall -rdynamic -std=c++17 -finstrument-functions -finstrument-functions-exclude-file-list=$(CPP_STD_INCLUDES)
+CXXFLAGS +=  -fPIC
 
 IDIR = ../include
 ODIR = ../build
@@ -66,11 +67,11 @@ $(DYNAMIC_EXECUTABLE): $(DYNAMIC_LIBRARY) $(OBJS)
 $(STATIC_EXECUTABLE): $(STATIC_LIBRARY) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-$(DYNAMIC_LIBRARY): $(OBJS)
-	$(CXX) $(CXXFLAGS) -shared -o $@ $^
+#$(DYNAMIC_LIBRARY): $(OBJS)
+#	$(CXX) $(CXXFLAGS) -shared -o $@ $^
 
-$(STATIC_LIBRARY): $(OBJS)
-	$(AR) -r $@ $^
+#$(STATIC_LIBRARY): $(OBJS)
+#	$(AR) -r $@ $^
 
 $(ODIR)/%.o : %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCS)

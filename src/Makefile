@@ -21,6 +21,7 @@ $(info $$CPP_STD_INCLUDES is [${CPP_STD_INCLUDES}])
 
 CXX ?= g++
 CXXFLAGS = -g -O0 -Wall -rdynamic -std=c++17 -finstrument-functions -finstrument-functions-exclude-file-list=$(CPP_STD_INCLUDES)
+CXXFLAGS +=  -fPIC
 
 IDIR = ../include
 ODIR = ../build

@@ -17,7 +17,7 @@ all: makedirs callStack test
 callStack:
 	$(MAKE) -C src
 
-test:
+test:callStack
 	$(MAKE) -C test
 
 makedirs: $(ODIR)
