@@ -20,7 +20,7 @@ CPP_STD_INCLUDES := "${CPP_STD_INCLUDES},include/callStack.h,include/unwinder.h,
 $(info $$CPP_STD_INCLUDES is [${CPP_STD_INCLUDES}])
 
 CXX ?= g++
-CXXFLAGS += -g -Wall -rdynamic -std=c++17 -finstrument-functions -finstrument-functions-exclude-file-list=$(CPP_STD_INCLUDES)
+CXXFLAGS = -g -O0 -Wall -rdynamic -std=c++17 -finstrument-functions -finstrument-functions-exclude-file-list=$(CPP_STD_INCLUDES)
 
 IDIR = ../include
 ODIR = ../build
@@ -28,7 +28,6 @@ LIB_DIR = ../lib
 INCS = -I$(IDIR) -L$(LIB_DIR)
 LIBS = -ldl -lbfd
 
-#SOURCES := $(shell find . -name "*.cpp" -printf '%f\n')
 SOURCES := callStack.cpp trace.cpp
 _HEADERS  := $(shell find $(IDIR) -name "*.h" -printf '%f\n')
 
@@ -40,7 +39,8 @@ $(info "_OBJS is ${_OBJS}")
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 $(info "OBJS is ${OBJS}")
 
-LIBRARY = $(ODIR)/libcallstack.a
+STATIC_LIBRARY = $(ODIR)/libcallstack.a
+SHARED_LIBRARY = $(ODIR)/libcallstack.so
 
 ifdef log_with_addr
 	CXXFLAGS += -DLOG_ADDR
@@ -53,16 +53,17 @@ ifdef disable_instrumentation
 endif
 
 .PHONY: build libcallstack run
-build: $(LIBRARY) 
+build: $(STATIC_LIBRARY) $(SHARED_LIBRARY)
 
-$(LIBRARY): $(OBJS)
+$(STATIC_LIBRARY): $(OBJS)
 	$(AR) -r $@ $^
+
+$(SHARED_LIBRARY): $(OBJS)
+	$(CXX) -shared -o $@ $^ $(LIBS)
 
 $(ODIR)/%.o : %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCS)
 
-
 .PHONY: clean
 clean:
-	rm -f $(EXECUTABLE) $(OBJS)
-
+	rm -f $(STATIC_LIBRARY) $(SHARED_LIBRARY) $(OBJS)

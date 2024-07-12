@@ -1,4 +1,3 @@
-#
 # Copyright © 2020-2023 Tomasz Augustyn
 # All rights reserved.
 #
@@ -28,11 +27,9 @@ LIB_DIR = ../lib
 INCS = -I$(IDIR) -L$(LIB_DIR)
 LIBS = -ldl -lbfd 
 
-#SOURCES := $(shell find . -name "*.cpp" -printf '%f\n')
 SOURCES := main.cpp
 
 _HEADERS  := $(shell find $(IDIR) -name "*.h" -printf '%f\n')
-
 HEADERS = $(patsubst %,$(IDIR)/%,$(_HEADERS))
 
 _OBJS = $(SOURCES:.cpp=.o)
@@ -40,10 +37,11 @@ $(info "_OBJS is ${_OBJS}")
 
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 $(info "OBJS is ${OBJS}")
-$(info "_OBJS_TEST is ${_OBJS_TEST}")
 
-EXECUTABLE = $(ODIR)/runDemo
-LIBRARY = $(ODIR)/libcallstack.a
+DYNAMIC_EXECUTABLE = $(ODIR)/runDemoWithDynamicLib
+STATIC_EXECUTABLE = $(ODIR)/runDemoWithStaticLib
+DYNAMIC_LIBRARY = $(ODIR)/libcallstack.so
+STATIC_LIBRARY = $(ODIR)/libcallstack.a
 
 ifdef log_with_addr
 	CXXFLAGS += -DLOG_ADDR
@@ -55,26 +53,33 @@ ifdef disable_instrumentation
 	CXXFLAGS = -g -Wall -std=c++17 -DDISABLE_INSTRUMENTATION
 endif
 
-.PHONY: build libcallstack run
-build: $(SOURCES) $(EXECUTABLE)
+.PHONY: build build-dynamic build-static run-dynamic run-static clean
 
-$(EXECUTABLE): $(LIBRARY) $(_OBJS_TEST)
+build: build-dynamic build-static
+
+build-dynamic: $(DYNAMIC_EXECUTABLE)
+build-static: $(STATIC_EXECUTABLE)
+
+$(DYNAMIC_EXECUTABLE): $(DYNAMIC_LIBRARY) $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-$(LIBRARY): $(OBJS)
+$(STATIC_EXECUTABLE): $(STATIC_LIBRARY) $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+
+$(DYNAMIC_LIBRARY): $(OBJS)
+	$(CXX) $(CXXFLAGS) -shared -o $@ $^
+
+$(STATIC_LIBRARY): $(OBJS)
 	$(AR) -r $@ $^
 
 $(ODIR)/%.o : %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCS)
 
-run:
-	$(EXECUTABLE)
+run-dynamic:
+	$(DYNAMIC_EXECUTABLE)
 
-libcallstack:
-	$(LIBRARY)
+run-static:
+	$(STATIC_EXECUTABLE)
 
-
-.PHONY: clean
 clean:
-	rm -f $(EXECUTABLE) $(OBJS)
-
+	rm -f $(DYNAMIC_EXECUTABLE) $(STATIC_EXECUTABLE) $(OBJS) $(DYNAMIC_LIBRARY) $(STATIC_LIBRARY)
