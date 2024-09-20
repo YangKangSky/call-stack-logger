@@ -11,7 +11,7 @@
 #include <iostream>
 #include <vector>
 
-#include "callStack.h"
+//#include "callStack.h"
 
 class A {
 public:
@@ -69,6 +69,5 @@ int main() {
     print(44, 3.14159, "whatever\n");
     // Test logging inline function
     cube(3);
-
     return 0;
 }
