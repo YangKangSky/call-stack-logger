@@ -9,6 +9,9 @@
 
 #pragma once
 
+#define PACKAGE 1
+#define PACKAGE_VERSION 1
+
 #include <optional>
 #include <string>
 

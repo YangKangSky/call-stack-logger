@@ -34,7 +34,7 @@ message(STATUS "CPP_STD_INCLUDES is [${CPP_STD_INCLUDES}]")
 # Set C++ compiler and flags
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-g -Wall -rdynamic -finstrument-functions -finstrument-functions-exclude-file-list=${CPP_STD_INCLUDES}")
+set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS}   -g -Wall -rdynamic -finstrument-functions -finstrument-functions-exclude-file-list=${CPP_STD_INCLUDES}")
 
 # Set include directories and link libraries
 include_directories("../include")
@@ -63,5 +63,5 @@ endif()
 
 # Disable instrumentation if necessary
 if(DISABLE_INSTRUMENTATION)
-    set(CMAKE_CXX_FLAGS "-g -Wall -std=c++17 -DDISABLE_INSTRUMENTATION")
+    set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS}   -g -Wall -std=c++17 -DDISABLE_INSTRUMENTATION")
 endif()
